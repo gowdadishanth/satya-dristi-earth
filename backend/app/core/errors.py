@@ -72,23 +72,23 @@ class ValidationError(SatyaDristiError):
         super().__init__("VALIDATION_ERROR", message, status.HTTP_422_UNPROCESSABLE_ENTITY, details)
 
 class AIAuthenticationError(SatyaDristiError):
-    def __init__(self, message: str = "AI service authentication failed. Verify GEMINI_API_KEY.", details: dict = None):
+    def __init__(self, message: str = "Analysis service authentication failed. Verify service configuration.", details: dict = None):
         super().__init__("AI_AUTHENTICATION_ERROR", message, status.HTTP_500_INTERNAL_SERVER_ERROR, details)
 
 class AIServiceUnavailableError(SatyaDristiError):
-    def __init__(self, message: str = "AI reasoning service is currently unavailable or experiencing temporary high demand.", details: dict = None):
+    def __init__(self, message: str = "Remote sensing reasoning service is currently unavailable or experiencing temporary high demand.", details: dict = None):
         super().__init__("AI_SERVICE_UNAVAILABLE", message, status.HTTP_503_SERVICE_UNAVAILABLE, details)
 
 class AIQuotaExceededError(SatyaDristiError):
-    def __init__(self, message: str = "AI service quota exceeded or rate limit reached. Please wait a moment before resubmitting.", details: dict = None):
+    def __init__(self, message: str = "Remote sensing service quota exceeded or rate limit reached. Please wait a moment before resubmitting.", details: dict = None):
         super().__init__("AI_QUOTA_EXCEEDED", message, status.HTTP_429_TOO_MANY_REQUESTS, details)
 
 class AIRequestFailedError(SatyaDristiError):
-    def __init__(self, message: str = "AI reasoning analysis request failed.", details: dict = None):
+    def __init__(self, message: str = "Remote sensing reasoning analysis request failed.", details: dict = None):
         super().__init__("AI_REQUEST_FAILED", message, status.HTTP_502_BAD_GATEWAY, details)
 
 class AIInputTooLargeError(SatyaDristiError):
-    def __init__(self, message: str = "Satellite imagery raster exceeds Gemini API size limits. Please select a smaller AOI.", details: dict = None):
+    def __init__(self, message: str = "Satellite imagery raster exceeds processing size limits. Please select a smaller AOI.", details: dict = None):
         super().__init__("AI_INPUT_TOO_LARGE", message, status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, details)
 
 class SARUnavailableError(SatyaDristiError):

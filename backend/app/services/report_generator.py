@@ -305,7 +305,7 @@ class ReportGeneratorService:
             story.append(Spacer(1, 10))
 
             # Query & Executive Answer Box
-            story.append(Paragraph("<b>QUERY & EXECUTIVE RESULT</b>", h2_style))
+            story.append(Paragraph("<b>EARTH OBSERVATION INQUIRY & LANDSCAPE STORY</b>", h2_style))
             query_rows = [
                 [Paragraph("<b>Query:</b>", subtitle_style), Paragraph(f"<i>\"{clean_pdf_text(analysis.get('query', ''))}\"</i>", body_style)],
                 [Paragraph("<b>Task:</b>", subtitle_style), Paragraph(f"<b>{clean_pdf_text(analysis.get('task', ''))}</b> ({clean_pdf_text(analysis.get('input', ''))})", body_style)],
@@ -314,8 +314,8 @@ class ReportGeneratorService:
             exec_narrative = analysis.get("model_interpretation") or analysis.get("executive_narrative")
             if exec_narrative and exec_narrative != analysis.get("answer"):
                 query_rows.append([
-                    Paragraph("<b>AI Narrative:</b>", subtitle_style),
-                    Paragraph(clean_pdf_text(exec_narrative), body_style)
+                    Paragraph("<b>Landscape Story:</b>", subtitle_style),
+                    Paragraph(f"<i>{clean_pdf_text(exec_narrative)}</i>", body_style)
                 ])
             query_box = Table(query_rows, colWidths=[90, 440])
             query_box.setStyle(TableStyle([
@@ -462,10 +462,10 @@ class ReportGeneratorService:
             
             story.append(Spacer(1, 10))
 
-            # AI Observations & Grounded Findings Section
+            # Grounded Radar Evidence & Field Observations Section
             observations = analysis.get("observations") or []
             if observations:
-                story.append(Paragraph("<b>AI OBSERVATIONS & GROUNDED FINDINGS</b>", h2_style))
+                story.append(Paragraph("<b>GROUNDED RADAR EVIDENCE & FIELD OBSERVATIONS</b>", h2_style))
                 obs_paragraphs = [
                     Paragraph(f"• {clean_pdf_text(obs)}", body_style) for obs in observations
                 ]

@@ -67,13 +67,13 @@ const sampleFiles: Record<Mode, { name: string; modality: string; res: string; s
 function formatErrorMessage(raw: string): string {
   if (!raw) return "Analysis failed. Please try again.";
   if (raw.includes("503") || raw.toLowerCase().includes("high demand") || raw.toLowerCase().includes("unavailable")) {
-    return "The Gemini AI model was temporarily experiencing high demand. Automatic retry is enabled, please click Retry Analysis below.";
+    return "The remote sensing analysis service was temporarily experiencing high demand. Automatic retry is enabled, please click Retry Analysis below.";
   }
   if (raw.includes("429") || raw.toLowerCase().includes("quota") || raw.toLowerCase().includes("rate limit")) {
-    return "Gemini API rate limit reached. Please wait a few seconds and click Retry Analysis.";
+    return "Analysis service rate limit reached. Please wait a few seconds and click Retry Analysis.";
   }
   if (raw.includes("401") || raw.toLowerCase().includes("unauthorized") || raw.toLowerCase().includes("api key")) {
-    return "Invalid or unauthorized Gemini API key. Please check your GEMINI_API_KEY in backend/.env.";
+    return "Invalid or unauthorized service key. Please check your configuration in backend/.env.";
   }
   const match = raw.match(/'message':\s*['"]([^'"]+)['"]/);
   if (match && match[1]) {
@@ -222,7 +222,7 @@ export function Analyze() {
           setPhase("result");
         } else if (status.status === "failed") {
           clearInterval(interval);
-          setAnalysisError(status.error || "Remote-sensing model execution failed");
+          setAnalysisError(status.error || "Remote-sensing analysis failed");
           setPhase("setup");
           setJobStatus(null);
           setActiveJobId(null);
@@ -279,12 +279,12 @@ export function Analyze() {
   };
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_280px] items-start">
+    <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)_260px] xl:grid-cols-[300px_minmax(0,1fr)_280px] items-start">
       {/* =========================================================================
           LEFT COLUMN: INPUT + QUERY CONTROL PANEL (280-320px)
           Flat grouping, generous spacing, no nested card boxes
          ========================================================================= */}
-      <div className="flex flex-col gap-5 rounded-lg border border-border bg-card p-4 shadow-xs">
+      <div className="flex flex-col gap-5 rounded-2xl glass-card p-5">
         {/* Panel Header */}
         <div className="border-b border-border pb-3">
           <h2 className="text-[14px] font-semibold text-foreground tracking-tight">Analysis Controls</h2>
@@ -341,10 +341,10 @@ export function Analyze() {
                   ? "bg-accent/15 border-accent text-accent shadow-xs"
                   : "bg-muted border-border text-muted-foreground hover:text-foreground"
               )}
-              title={autoMode ? "AI automatically selects the modality based on your query. Click to switch to manual mode." : "Manual mode active. Click to enable AI auto-routing."}
+              title={autoMode ? "Automatically selects the modality based on your query. Click to switch to manual mode." : "Manual mode active. Click to enable sensor auto-routing."}
             >
               <span className={cn("h-1.5 w-1.5 rounded-full", autoMode ? "bg-accent animate-pulse" : "bg-muted-foreground")} />
-              {autoMode ? "AI Auto-Select: ON" : "Manual Mode"}
+              {autoMode ? "Auto-Select: ON" : "Manual Mode"}
             </button>
           </div>
           <div className="mt-2 grid grid-cols-3 gap-1.5">
@@ -371,7 +371,7 @@ export function Analyze() {
                 >
                   {autoMode && active && (
                     <span className="absolute -top-1.5 right-1 px-1 rounded bg-accent text-[9px] font-bold text-[#081a0c] tracking-tight uppercase shadow-xs">
-                      AI Active
+                      Auto Active
                     </span>
                   )}
                   <M.icon className="h-4 w-4 text-accent" />
@@ -543,14 +543,14 @@ export function Analyze() {
           </div>
         </div>
 
-        {/* 4. WHAT DO YOU WANT TO KNOW? (Question Input with Live AI Auto-Routing) */}
+        {/* 4. WHAT DO YOU WANT TO KNOW? (Question Input with Live Sensor Auto-Routing) */}
         <div>
           <div className="flex items-center justify-between">
             <label htmlFor="q" className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground">
               What do you want to know?
             </label>
             <span className="mono text-[10.5px] text-accent font-medium">
-              {autoMode ? "✦ AI Auto-Detecting" : "Manual Selection"}
+              {autoMode ? "✦ Auto-Detecting" : "Manual Selection"}
             </span>
           </div>
           <textarea
@@ -562,7 +562,7 @@ export function Analyze() {
             placeholder="Ask anything—e.g. land-cover, radar backscatter through clouds, or how the area changed over time…"
           />
 
-          {/* Dynamic AI Intent & Sensor Auto-Routing Banner */}
+          {/* Dynamic Intent & Sensor Auto-Routing Banner */}
           {query.trim() && (
             <div className="mt-2 rounded-md border border-accent/35 bg-accent/8 p-2.5 text-[11.5px] transition-all animate-in fade-in duration-200">
               <div className="flex items-center justify-between gap-2">
@@ -586,7 +586,7 @@ export function Analyze() {
 
           {/* Multi-Modal Query Examples that showcase auto-routing */}
           <div className="mt-2.5">
-            <span className="mono text-[11px] text-muted-foreground">Try asking anything (AI auto-switches pipeline):</span>
+            <span className="mono text-[11px] text-muted-foreground">Try asking anything (Auto-switches sensor pipeline):</span>
             <div className="mt-1 flex flex-col gap-1">
               {[
                 { label: "Visual VQA", q: "Describe the major land-cover types visible in this area." },
@@ -691,12 +691,12 @@ export function Analyze() {
           </div>
         ) : inputSource === "map" && phase !== "running" ? (
           /* Global Earth Observation Explorer (Map dominant, results beneath) */
-          <div className="rounded-lg border border-border bg-card p-3.5 shadow-xs">
+          <div className="rounded-2xl glass-card p-4">
             <GlobalMap mode={effectiveMode} onSelectSceneAndAOI={handleSelectFromMap} />
           </div>
         ) : (
           /* Canvas Preview Frame for Manual Upload or Processing State */
-          <div className="rounded-lg border border-border bg-card p-3.5 shadow-xs">
+          <div className="rounded-2xl glass-card p-4">
             <div className="flex items-center justify-between border-b border-border pb-2.5">
               <div className="flex items-center gap-2">
                 <meta.icon className="h-4 w-4 text-accent" />
@@ -725,7 +725,7 @@ export function Analyze() {
                   <div className="max-w-xs text-center">
                     <StatDot tone="warn" />
                     <p className="mono mt-3 text-[13px] font-medium uppercase tracking-wide text-foreground">
-                      {jobStatus?.current_stage ? jobStatus.current_stage.replace(/_/g, " ") : "Executing specialist models"}
+                      {jobStatus?.current_stage ? jobStatus.current_stage.replace(/_/g, " ") : "Executing spectral pipelines"}
                     </p>
                     <p className="mono mt-1 text-[11px] text-muted-foreground">
                       Progress: {jobStatus?.progress_pct || 15}% · auditable execution
@@ -744,7 +744,7 @@ export function Analyze() {
          ========================================================================= */}
       <div className="flex flex-col gap-4">
         {/* Compact Analysis Pipeline Timeline */}
-        <div className="rounded-lg border border-border bg-card p-3.5 shadow-xs">
+        <div className="rounded-2xl glass-card p-4">
           <div className="flex items-center justify-between border-b border-border pb-2">
             <h3 className="text-[12.5px] font-semibold text-foreground tracking-tight">Analysis Pipeline</h3>
             <Badge tone={phase === "result" ? "ok" : phase === "running" ? "warn" : "neutral"}>
@@ -762,29 +762,29 @@ export function Analyze() {
                   <div className="flex flex-col items-center">
                     <span
                       className={cn(
-                        "grid h-[18px] w-[18px] place-items-center rounded-full text-[10px] font-medium transition-colors",
+                        "grid h-[18px] w-[18px] place-items-center rounded-full text-[10px] font-semibold transition-colors",
                         done
-                          ? "bg-[color:var(--ok)] text-white"
+                          ? "bg-[#2E7D32] text-white shadow-xs"
                           : active
-                          ? "border border-[color:var(--warn)] text-[color:var(--warn)] animate-pulse"
-                          : "border border-border/80 text-muted-foreground/70"
+                          ? "border-2 border-[#C28E3A] text-[#734A12] bg-[#C28E3A]/15 animate-pulse"
+                          : "border border-[#789575]/50 text-[#2E4030] bg-[#E5E8CE]/50"
                       )}
                     >
                       {done ? <IconCheck className="h-2.5 w-2.5" /> : i + 1}
                     </span>
                     {i < currentStages.length - 1 && (
                       <span
-                        className={cn("my-0.5 w-px flex-1", done ? "bg-[color:var(--ok)]/40" : "bg-border/60")}
+                        className={cn("my-0.5 w-px flex-1", done ? "bg-[#2E7D32]/50" : "bg-[#789575]/35")}
                         style={{ minHeight: 12 }}
                       />
                     )}
                   </div>
                   <div className="pb-2">
-                    <p className={cn("text-[12px] font-medium leading-tight", !done && !active && "text-muted-foreground/80")}>
+                    <p className={cn("text-[12px] font-semibold leading-tight", done || active ? "text-[#141F16]" : "text-[#2E4030]")}>
                       {s.name}
                     </p>
                     {(done || active) && (
-                      <p className="mono mt-0.5 text-[9.5px] text-muted-foreground">
+                      <p className="mono mt-0.5 text-[9.5px] text-[#2E4030] font-medium">
                         {s.detail}{done && ` · nominal`}
                       </p>
                     )}
@@ -804,7 +804,7 @@ export function Analyze() {
                 level={analysisResult.confidence}
                 agreements={analysisResult.agreements || [
                   { label: "Spectral Indices", state: "agree" },
-                  { label: "Specialist Model", state: "agree" },
+                  { label: "Sensor Consensus", state: "agree" },
                   { label: "Spatial Registration", state: "agree" },
                 ]}
               />
@@ -1087,10 +1087,10 @@ function ResultCanvas({ mode, result }: { mode: Mode; result: AnalysisRecord }) 
           <div className="mt-4 border-t border-border pt-3">
             <span className="text-[11.5px] font-semibold uppercase tracking-wider text-muted-foreground">Evidence Legend</span>
             <div className="mt-2 space-y-1.5 text-[11.5px]">
-              <Legend c="#4dbe55" label="Built-up Grounding / Land Feature" />
-              <Legend c="#698696" label="Water Body / Low Backscatter" />
-              <Legend c="#79ed91" label="High-Confidence Spectral Change" />
-              <Legend c="#71776d" label="Unchanged Slate Baseline" />
+              <Legend c="#79ed91" label="Built-up Grounding / Double-Bounce" />
+              <Legend c="#8fae8c" label="Water Body / Specular Reflection" />
+              <Legend c="#d49a3d" label="High-Confidence Surface Change" />
+              <Legend c="#a6b5a4" label="Unchanged Stable Terrain" />
             </div>
           </div>
         </div>
@@ -1118,32 +1118,71 @@ function IconBtn({ children, label, onClick }: { children: any; label: string; o
 
 /* -------- Real Answer Panel -------- */
 function AnswerPanel({ record }: { record: AnalysisRecord }) {
+  const [isStoryExpanded, setIsStoryExpanded] = useState(false);
+  const storyText = record.model_interpretation || "Across this Area of Interest, active microwave radar pulses cut through cloud cover, using specular water reflections, volume canopy scattering, and structural double-bounce geometry to reveal the living rhythms of Earth's dynamic surface.";
+  const isLongStory = storyText.length > 180;
+
   return (
-    <div className="rounded-lg border border-border bg-card p-4 shadow-xs fade-up">
-      <div className="flex flex-wrap items-center gap-2 border-b border-border pb-2.5">
-        <span className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground">Answer</span>
+    <div className="rounded-2xl glass-card p-4.5 shadow-xs fade-up">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#789575]/30 pb-2.5">
+        <span className="text-[12px] font-bold uppercase tracking-wider text-[#789575]">Answer</span>
         <Badge tone="accent">{record.task}</Badge>
         <Badge tone="neutral">{record.input}</Badge>
-        <span className="mono ml-auto text-[11px] text-muted-foreground">
+        <span className="mono ml-auto text-[11px] text-[#2E4030]">
           {record.date} · {record.time}
         </span>
       </div>
-      <p className="mt-3 text-[15px] font-medium leading-relaxed text-foreground">{record.answer}</p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-md border border-border bg-muted/30 p-3">
-          <span className="text-[11.5px] font-semibold uppercase tracking-wider text-muted-foreground">Observed Evidence</span>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
-            {record.observed_evidence || "Evidence delineated from spectral bands and verified through spatial CRS coordinates."}
-          </p>
+      <p className="mt-3 text-[14.5px] font-medium leading-relaxed text-[#141F16]">{record.answer}</p>
+      
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 items-start">
+        {/* Left Card: Observed Evidence */}
+        <div className="rounded-xl border border-[#789575]/30 bg-white/75 p-3.5 flex flex-col justify-between min-h-[112px]">
+          <div>
+            <span className="text-[11.5px] font-bold uppercase tracking-wider text-[#2E4030]">Observed Evidence</span>
+            <p className="mt-1.5 text-[12px] leading-relaxed text-[#141F16] font-medium">
+              {record.observed_evidence || "Evidence delineated from spectral bands and verified through spatial CRS coordinates."}
+            </p>
+          </div>
+          <div className="mt-3 border-t border-[#789575]/25 pt-2 text-[10px] font-mono text-[#2E4030]">
+            CRS & Ground-Truth Verification: <strong className="text-[#141F16]">WGS84 EPSG:4326</strong>
+          </div>
         </div>
-        <div className="rounded-md border border-border bg-muted/30 p-3">
-          <span className="text-[11.5px] font-semibold uppercase tracking-wider text-muted-foreground">Model Interpretation</span>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
-            {record.model_interpretation || "Multi-modal remote sensing models cross-referenced against spectral threshold criteria."}
-          </p>
-          <p className="mono mt-2 text-[10.5px] text-muted-foreground">
-            Model: {record.model_used || "Specialist Remote-Sensing Ensemble"} ({record.device_used || "CPU"})
-          </p>
+
+        {/* Right Card: Earth Observation Story (Compact & Expandable) */}
+        <div className="rounded-xl border border-[#789575]/40 bg-[#E5E8CE]/75 p-3.5 flex flex-col justify-between min-h-[112px] transition-all">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11.5px] font-bold uppercase tracking-wider text-[#789575]">Earth Observation Story</span>
+              {isLongStory && (
+                <button
+                  type="button"
+                  onClick={() => setIsStoryExpanded((v) => !v)}
+                  className="mono text-[10px] font-bold text-[#789575] hover:text-[#141F16] transition-colors cursor-pointer"
+                >
+                  {isStoryExpanded ? "Compact ▴" : "Read more ▾"}
+                </button>
+              )}
+            </div>
+
+            <div className={cn("mt-1.5 transition-all", !isStoryExpanded && "line-clamp-3 overflow-hidden")}>
+              <p className="text-[12.5px] leading-relaxed text-[#141F16] font-medium italic">
+                "{storyText}"
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center justify-between border-t border-[#789575]/25 pt-2 text-[10px] font-mono text-[#2E4030]">
+            <span>Sensors: {record.model_used || "NISAR & Sentinel"}</span>
+            {isLongStory && (
+              <button
+                type="button"
+                onClick={() => setIsStoryExpanded((v) => !v)}
+                className="underline hover:text-[#141F16] cursor-pointer"
+              >
+                {isStoryExpanded ? "Show less" : "Read full story"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -1157,7 +1196,7 @@ function ExecutionTrace({ record }: { record: AnalysisRecord }) {
   const traces = record.execution_trace || [
     { name: "Input validation", detail: "Imagery CRS and GeoJSON bounds verified", duration: "0.08s" },
     { name: "Task routing", detail: `Intent routed to ${record.task}`, duration: "0.02s" },
-    { name: "Model inference", detail: `Executed on ${record.device_used || "CPU"}`, duration: "1.42s" },
+    { name: "Spectral inference", detail: `Executed on ${record.device_used || "CPU"}`, duration: "1.42s" },
     { name: "Evidence generation", detail: "Grounding and spectral masks rendered", duration: "0.34s" },
   ];
 
@@ -1187,7 +1226,7 @@ function ExecutionTrace({ record }: { record: AnalysisRecord }) {
             ))}
           </div>
           <p className="mt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-            Observable execution stages only. Proprietary model internal activations are not exposed.
+            Observable execution stages only. Proprietary internal activations are not exposed.
           </p>
         </div>
       )}

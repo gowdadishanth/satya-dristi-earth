@@ -303,7 +303,7 @@ class AnalysisJobManager:
                 "status": "Complete",
                 "answer": result_data.get("answer", "Analysis completed."),
                 "observed_evidence": result_data.get("observed_evidence", "Evidence registered to ground scene."),
-                "model_interpretation": result_data.get("model_interpretation", "Result supported by specialist model analysis."),
+                "model_interpretation": result_data.get("model_interpretation", "Across this landscape, active microwave radar pulses cut through cloud cover, using specular water reflections, volume canopy scattering, and structural double-bounce geometry to reveal the living rhythms of Earth's dynamic surface."),
                 "model_used": result_data.get("model_used", model_pipeline),
                 "device_used": device_used,
                 "primary_image_path": primary_image_path,

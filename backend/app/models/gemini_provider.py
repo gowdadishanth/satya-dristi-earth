@@ -56,8 +56,15 @@ class GeminiLandCoverClass(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0, description="Classification confidence score")
 
 class GeminiAnalysisOutput(BaseModel):
-    summary: str = Field(description="Direct, precise natural-language answer addressing the user's specific query")
-    executive_narrative: str = Field(description="Comprehensive technical analysis narrative suitable for a formal Earth Observation intelligence report")
+    summary: str = Field(description="Direct, precise natural-language answer addressing the user's specific query (1 to 2 sentences)")
+    executive_narrative: str = Field(
+        description=(
+            "A concise, punchy Earth Science story of the result (strictly 2 to 3 sentences, 40 to 65 words maximum). "
+            "Do NOT write long essays or rambling paragraphs. Never use robotic AI phrases ('The model detected', 'Based on imagery'). "
+            "Deliver an evocative, concise snapshot of the landscape: the dance between natural water/vegetation processes and human activity, "
+            "and how microwave radar backscatter (specular reflection, volume scattering, or double-bounce) makes this hidden rhythm visible."
+        )
+    )
     observations: List[str] = Field(default_factory=list, description="Specific, grounded remote-sensing observations identified directly from the visual raster")
     objects: List[GeminiObjectDetection] = Field(default_factory=list, description="Localized visual objects or features matching the query or of analytical interest")
     land_cover: List[GeminiLandCoverClass] = Field(default_factory=list, description="Categorized surface composition breakdown")
@@ -84,10 +91,10 @@ class GeminiProvider(AIProvider):
         self._geod = Geod(ellps="WGS84")
 
     def get_provider_name(self) -> str:
-        return "Google Gemini API"
+        return "Satya Dristi Remote Sensing Suite"
 
     def get_model_name(self) -> str:
-        return self._model_name
+        return "Autonomous Remote Sensing Engine"
 
     def _get_client(self):
         """Initializes and returns the Google GenAI client using backend-isolated API key."""
@@ -501,28 +508,28 @@ class GeminiProvider(AIProvider):
 
                 # Non-retryable errors
                 if "api key" in err_msg or "unauthorized" in err_msg or "401" in err_msg or "403" in err_msg:
-                    raise AIAuthenticationError("Invalid or unauthorized Gemini API key. Please check your GEMINI_API_KEY in backend/.env.")
+                    raise AIAuthenticationError("Invalid or unauthorized service key. Please check your configuration in backend/.env.")
                 elif "too large" in err_msg or "payload" in err_msg or "413" in err_msg:
-                    raise AIInputTooLargeError("Satellite imagery raster exceeds Gemini API size limits. Please select a smaller AOI.")
+                    raise AIInputTooLargeError("Satellite imagery raster exceeds processing size limits. Please select a smaller AOI.")
 
                 # For 503 (high demand) or 429 (quota/rate limit), wait and retry
                 if attempt < max_retries - 1:
                     delay = backoff_delays[attempt]
-                    logger.info("Retrying Gemini inference in %.1fs due to temporary demand spike...", delay)
+                    logger.info("Retrying remote sensing inference in %.1fs due to temporary demand spike...", delay)
                     await asyncio.sleep(delay)
 
         if not response or not (response.text or getattr(response, "candidates", None)):
             err_str = str(last_error) if last_error else "Service did not return candidates"
             if "503" in err_str or "unavailable" in err_str.lower():
                 raise AIServiceUnavailableError(
-                    "Gemini AI model is currently experiencing temporary high demand (503). Please wait a few seconds and try again."
+                    "Remote sensing analysis service is currently experiencing temporary high demand (503). Please wait a few seconds and try again."
                 )
             elif "429" in err_str or "quota" in err_str.lower() or "rate" in err_str.lower():
                 raise AIQuotaExceededError(
-                    "Gemini AI rate limit or quota exceeded. Please wait a moment before resubmitting your query."
+                    "Analysis rate limit or quota reached. Please wait a moment before resubmitting your query."
                 )
             else:
-                raise AIRequestFailedError(f"Gemini inference call failed: {err_str}")
+                raise AIRequestFailedError(f"Remote sensing inference call failed: {err_str}")
 
         # Parse structured JSON response
         try:
@@ -554,15 +561,18 @@ class GeminiProvider(AIProvider):
         geo_bbox = aoi_metadata.get("bbox") if aoi_metadata else None
 
         system_instruction = (
-            "You are Satya Dristi, an elite Earth Observation Remote Sensing Intelligence System. "
+            "You are Satya Dristi, an Earth Science storyteller and expert Remote Sensing analyst. "
             "You are analyzing an authoritative, high-resolution satellite imagery raster clipped precisely to the user's Area of Interest (AOI). "
             "Examine the optical spectral bands, texture, geometry, land use patterns, and geographical features. "
             "Ground your analysis strictly in visible evidence. "
             "For any localized geographical objects, structures, infrastructure, or distinct surface bodies mentioned in the query "
             "or prominent in the AOI (e.g. water bodies, lakes, built structures, roads, forest canopy, agricultural fields), "
             "you MUST output normalized bounding boxes in box_2d with format [ymin, xmin, ymax, xmax] on a 0 to 1000 scale. "
-            "Do not invent measurements; the backend will project your bounding boxes to calculate ground surface area. "
-            "Conform strictly to the JSON schema."
+            "CRITICAL REQUIREMENT FOR executive_narrative: "
+            "Do NOT write in dry, robotic AI jargon (NEVER say 'The AI model detected', 'The system processed', 'Based on the imagery', 'The analysis shows'). "
+            "LENGTH LIMIT: Keep executive_narrative strictly concise: exactly 2 to 3 punchy sentences (40 to 65 words maximum). "
+            "Craft a concise Earth Science story of what this observation reveals: the balance between natural water/vegetation features "
+            "and expanding human presence, and how remote sensing signatures make this rhythm visible."
         )
 
         prompt = (
@@ -571,7 +581,8 @@ class GeminiProvider(AIProvider):
             f"- Spatial AOI Bounding Box (WGS84): {geo_bbox or 'Regional Extent'}\n"
             f"- Satellite Platform / Sensor: {satellite_metadata.get('platform', 'Sentinel-2 / High-Resolution Optical') if satellite_metadata else 'High-Resolution Satellite'}\n"
             f"- Image Pixel Dimensions: {pil_img.width}x{pil_img.height}\n\n"
-            "Provide a thorough, grounded Earth Observation analysis answering the user query, "
+            "Provide a grounded Earth Observation response answering the user query. "
+            "In executive_narrative, craft a punchy 2-to-3 sentence (40-65 words max) Earth Science story of the landscape, "
             "identify land cover composition, localize key features with [ymin, xmin, ymax, xmax] boxes, "
             "and state explicit atmospheric/sensor boundaries."
         )
@@ -617,8 +628,8 @@ class GeminiProvider(AIProvider):
 
         return StructuredAIFindings(
             task="Single-Image VQA & Scene Understanding",
-            model_used=self._model_name,
-            device_used="Cloud API (Google AI Studio)",
+            model_used="Satya Dristi Remote Sensing Engine",
+            device_used="Cloud Accelerated",
             summary=output.summary,
             executive_narrative=output.executive_narrative,
             observations=output.observations,
@@ -631,7 +642,7 @@ class GeminiProvider(AIProvider):
             confidence_rating=output.confidence_rating,
             evidence_path=evidence_path,
             evidence_filename=Path(evidence_path).name,
-            observed_evidence=f"Gemini identified {len(grounded_objects)} grounded feature(s) and {len(output.observations)} verified observation(s).",
+            observed_evidence=f"Identified {len(grounded_objects)} grounded feature(s) and {len(output.observations)} verified observation(s).",
             model_interpretation=output.executive_narrative,
             raw_model_metrics={
                 "provider": "gemini",
@@ -663,7 +674,7 @@ class GeminiProvider(AIProvider):
         geo_bbox = aoi_metadata.get("bbox") if aoi_metadata else None
 
         system_instruction = (
-            "You are Satya Dristi, an elite Remote Sensing Temporal Change Intelligence Analyst. "
+            "You are Satya Dristi, an Earth Science storyteller and expert in Remote Sensing temporal dynamics. "
             "You are evaluating two chronological high-resolution satellite rasters of the exact same Area of Interest (AOI): "
             "Image 1 is the BASELINE (BEFORE) observation. "
             "Image 2 is the TARGET (AFTER) observation. "
@@ -671,7 +682,11 @@ class GeminiProvider(AIProvider):
             "Differentiate true land cover change from illumination angle differences, atmospheric haze, or seasonal shifts. "
             "For each detected change, report its type, nuanced description, confidence, and bounding box [ymin, xmin, ymax, xmax] "
             "on the 0..1000 scale over the after image. "
-            "Conform strictly to the JSON schema."
+            "CRITICAL REQUIREMENT FOR executive_narrative: "
+            "Do NOT write in dry, robotic AI jargon (NEVER say 'The algorithm identified', 'Image 1 vs Image 2 comparison shows'). "
+            "LENGTH LIMIT: Keep executive_narrative strictly concise: exactly 2 to 3 sentences (40 to 65 words maximum). "
+            "Tell a concise story of temporal change: how water boundaries or vegetative canopies shifted between epochs, "
+            "and how human infrastructure or natural dynamics drove this physical transition."
         )
 
         prompt = (
@@ -681,8 +696,8 @@ class GeminiProvider(AIProvider):
             f"- Baseline Image Dimensions: {img_before.width}x{img_before.height}\n"
             f"- Target Image Dimensions: {img_after.width}x{img_after.height}\n\n"
             "Compare Image 1 (BEFORE) and Image 2 (AFTER). "
-            "Identify what has physically transformed, quantify the land cover shifts, localize the changes with bounding boxes, "
-            "and provide an executive analysis narrative."
+            "In executive_narrative, tell a punchy 2-to-3 sentence (40-65 words max) Earth Science story of what transformed over time, "
+            "quantify the land cover shifts, localize the changes with bounding boxes, and explain the physical drivers."
         )
 
         contents = [
@@ -751,8 +766,8 @@ class GeminiProvider(AIProvider):
 
         return StructuredAIFindings(
             task="Bi-Temporal Change Analysis",
-            model_used=self._model_name,
-            device_used="Cloud API (Google AI Studio)",
+            model_used="Satya Dristi Remote Sensing Engine",
+            device_used="Cloud Accelerated",
             summary=output.summary,
             executive_narrative=output.executive_narrative,
             observations=output.observations,
@@ -771,7 +786,7 @@ class GeminiProvider(AIProvider):
             confidence_rating=output.confidence_rating,
             evidence_path=evidence_path,
             evidence_filename=Path(evidence_path).name,
-            observed_evidence=f"Gemini bi-temporal reasoning identified {len(temporal_changes)} surface transformation vector(s).",
+            observed_evidence=f"Bi-temporal reasoning identified {len(temporal_changes)} surface transformation vector(s).",
             model_interpretation=output.executive_narrative,
             raw_model_metrics={
                 "provider": "gemini",
@@ -812,16 +827,18 @@ class GeminiProvider(AIProvider):
         geo_bbox = aoi_metadata.get("bbox") if aoi_metadata else None
 
         system_instruction = (
-            "You are Satya Dristi, an expert in Cross-Sensor Earth Observation Intelligence. "
+            "You are Satya Dristi, an Earth Science storyteller and expert in Microwave Radar Remote Sensing. "
             "You are provided with two authentic, co-registered satellite observations of the exact same Area of Interest (AOI): "
             "1. MULTI-SPECTRAL OPTICAL RASTER: Sensitive to visible surface reflectance, vegetative chlorophyll, and color. "
             "2. SYNTHETIC APERTURE RADAR (SAR) RASTER: Active microwave radar backscatter sensitive to surface roughness, "
             "dielectric properties, structural double-bounce (urban/metallic), and specular reflection (calm water = dark). "
             "Perform cross-sensor validation: use SAR to confirm surface water (dark specular radar signature) vs shadows, "
             "and structural urban density (bright dihedral double bounce). "
-            "NOTE: This is a multimodal comparative interpretation of the supplied optical and SAR observations, "
-            "not a specialized physics-based radar backscatter model. "
-            "Conform strictly to the JSON schema."
+            "CRITICAL REQUIREMENT FOR executive_narrative: "
+            "Do NOT write in dry, robotic AI jargon (NEVER say 'The model fused the channels', 'Cross-modal detection indicates'). "
+            "LENGTH LIMIT: Keep executive_narrative strictly concise: exactly 2 to 3 sentences (40 to 65 words maximum). "
+            "Craft an insightful story: how active radar cuts through clouds to reveal dielectric water reflections and structural "
+            "double-bounce geometry that optical views miss, illuminating the dance of urban development around natural waters."
         )
 
         prompt = (
@@ -830,7 +847,7 @@ class GeminiProvider(AIProvider):
             f"- Spatial BBox (WGS84): {geo_bbox or 'Regional Extent'}\n"
             f"- Optical Platform: {sensor_metadata.get('optical_platform', 'Sentinel-2 / MSI') if sensor_metadata else 'Sentinel-2'}\n"
             f"- Radar Platform: {sensor_metadata.get('sar_platform', 'Sentinel-1 C-SAR') if sensor_metadata else 'Sentinel-1 C-SAR'}\n\n"
-            "Synthesize both sensor streams to resolve land cover ambiguities and answer the query."
+            "Synthesize both sensor streams to resolve land cover ambiguities and craft a punchy 2-to-3 sentence (40-65 words max) Earth Observation story in executive_narrative."
         )
 
         contents = [
@@ -885,8 +902,8 @@ class GeminiProvider(AIProvider):
 
         return StructuredAIFindings(
             task="Optical + SAR Cross-Modal Reasoning",
-            model_used=self._model_name,
-            device_used="Cloud API (Google AI Studio)",
+            model_used="Satya Dristi Remote Sensing Engine",
+            device_used="Cloud Accelerated",
             summary=output.summary,
             executive_narrative=output.executive_narrative,
             observations=output.observations,

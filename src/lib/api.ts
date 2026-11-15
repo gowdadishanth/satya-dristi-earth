@@ -7,7 +7,12 @@ import { authService, isJwtExpired } from "./firebase";
  */
 
 const RAW_API_BASE = (import.meta.env.VITE_API_BASE_URL || "").trim().replace(/\/+$/, "");
-export const hasCustomBackend = Boolean(RAW_API_BASE && RAW_API_BASE !== "");
+const isLocalHost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+export const hasCustomBackend = Boolean(
+  RAW_API_BASE &&
+  RAW_API_BASE !== "" &&
+  !(isLocalHost && RAW_API_BASE.includes("onrender.com"))
+);
 const API_BASE = hasCustomBackend
   ? (RAW_API_BASE.endsWith("/api/v1") ? RAW_API_BASE : `${RAW_API_BASE}/api/v1`)
   : "/api/v1";

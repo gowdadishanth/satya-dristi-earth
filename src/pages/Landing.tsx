@@ -1,18 +1,56 @@
 import { useState } from "react";
+import {
+  Satellite,
+  Waves,
+  Trees,
+  MountainSnow,
+  Building2,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  Compass,
+  Layers,
+  Radio,
+  CheckCircle2,
+} from "lucide-react";
 import type { Route } from "../App";
 import { Brand } from "../components/Shell";
-import { Panel, Button, Eyebrow, Badge, Confidence } from "../components/ui";
-import { SatImage, OverlayGrounding, ScaleTag, REGIONS } from "../components/SatImage";
+import {
+  GlassCard,
+  GlowBadge,
+  Button,
+  Eyebrow,
+  Badge,
+  Confidence,
+  cn,
+} from "../components/ui";
+import {
+  SatImage,
+  OverlayGrounding,
+  ScaleTag,
+  REGIONS,
+} from "../components/SatImage";
 import { capabilities, pipelineSteps, domains } from "../lib/data";
 import {
-  IconOptical, IconSar, IconChange, IconGrounding, IconArrow,
-  IconEvidence, IconTrace, IconDownload, IconStatus, IconLayers,
+  IconOptical,
+  IconSar,
+  IconChange,
+  IconGrounding,
+  IconArrow,
+  IconEvidence,
+  IconTrace,
+  IconDownload,
+  IconStatus,
+  IconLayers,
 } from "../components/icons";
-import { authService } from "../lib/firebase";
-import { AuthModal, GoogleIcon } from "../components/AuthModal";
+import { AuthModal } from "../components/AuthModal";
+import { CosmicWaltzMesh } from "../components/CosmicWaltzMesh";
 
 const capIcon: Record<string, any> = {
-  optical: IconOptical, sar: IconSar, change: IconChange, grounding: IconGrounding,
+  optical: IconOptical,
+  sar: IconSar,
+  change: IconChange,
+  grounding: IconGrounding,
 };
 
 export function Landing({ navigate }: { navigate: (r: Route) => void }) {
@@ -23,184 +61,348 @@ export function Landing({ navigate }: { navigate: (r: Route) => void }) {
   };
 
   return (
-    <div className="app-bg min-h-screen">
-      {/* Top nav */}
-      <header className="sticky top-0 z-30 border-b border-border bg-card/85 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5">
-          <div className="flex items-center gap-8">
+    <div className="app-bg min-h-screen text-[#141F16]">
+      {/* Top Glass Navigation */}
+      <header className="sticky top-0 z-30 glass-header">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
+          <div className="flex items-center gap-10">
             <Brand onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
-            <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-              <a href="#capabilities" className="hover:text-foreground transition-colors">Capabilities</a>
-              <a href="#how" className="hover:text-foreground transition-colors">How it works</a>
-              <a href="#evidence" className="hover:text-foreground transition-colors">Evidence</a>
-              <a href="#workflows" className="hover:text-foreground transition-colors">Workflows</a>
+            <nav className="hidden items-center gap-8 text-xs font-mono uppercase tracking-wider text-[#2E4030] font-semibold md:flex">
+              <a href="#challenge" className="hover:text-[#789575] transition-colors">
+                The Challenge
+              </a>
+              <a href="#capabilities" className="hover:text-[#789575] transition-colors">
+                Radar Modalities
+              </a>
+              <a href="#pipeline" className="hover:text-[#789575] transition-colors">
+                7-Stage Pipeline
+              </a>
+              <a href="#evidence" className="hover:text-[#789575] transition-colors">
+                Evidence
+              </a>
             </nav>
           </div>
-          <div className="flex items-center gap-2.5">
-            <Button variant="ghost" size="sm" onClick={handleSignIn}>Sign in</Button>
-            <Button variant="primary" size="sm" onClick={() => navigate("analyze")}>Open workspace</Button>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={handleSignIn}>
+              Sign in
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => navigate("dashboard")}
+              icon={<ArrowRight className="h-3.5 w-3.5" />}
+            >
+              Story Dashboard
+            </Button>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-5 pb-8 pt-14">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr]">
+      {/* Hero Section: Story of Earth's Dance */}
+      <section className="relative mx-auto max-w-7xl px-6 lg:px-10 pb-16 pt-14 lg:pt-20 overflow-hidden">
+        {/* Generative Topographic Harmonic Wave Mesh (The Cosmic Waltz in Motion) */}
+        <div className="absolute inset-0 pointer-events-none opacity-45 overflow-hidden">
+          <CosmicWaltzMesh />
+        </div>
+
+        <div className="relative z-10 grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
           <div className="fade-up">
-            <Eyebrow>Multimodal Earth Observation Intelligence</Eyebrow>
-            <h1 className="mt-4 text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
-              Ask questions.<br />Analyze satellite imagery.
+            <div className="flex flex-wrap items-center gap-2.5">
+              <GlowBadge tone="sage">Earth Observation System</GlowBadge>
+              <span className="mono text-xs text-[#2E4030] font-bold uppercase tracking-widest">
+                NISAR Mission Science
+              </span>
+            </div>
+
+            <h1 className="mt-5 text-4xl font-extrabold leading-[1.1] tracking-tight text-[#141F16] sm:text-5xl lg:text-6xl">
+              Earth is dancing.<br />
+              <span className="text-[#789575]">
+                Watch it through radar.
+              </span>
             </h1>
-            <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-muted-foreground">
-              Satya Dristi routes Earth observation queries to specialized vision models and returns
-              evidence-grounded answers across optical, SAR, and temporal imagery.
+
+            <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-[#233325] font-medium">
+              From wetland loss to forest wildfires, earthquakes, and glacier movement,
+              Earth is in an endless waltz of surface change.
+              <strong className="text-[#141F16] font-bold"> Satya Dristi</strong> fuses active microwave SAR from NISAR with Sentinel-2 optical data,
+              transforming raw backscatter and dielectric signatures into interactive, evidence-grounded stories.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Button variant="accent" onClick={() => navigate("analyze")} icon={<IconArrow className="h-4 w-4" />}>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => navigate("dashboard")}
+                icon={<ArrowRight className="h-4 w-4" />}
+              >
+                Launch Story Dashboard
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate("analyze")}
+                icon={<Satellite className="h-4 w-4 text-[#789575]" />}
+              >
                 Open Analysis Workspace
               </Button>
-              <Button variant="outline" onClick={() => document.getElementById("how")?.scrollIntoView({ behavior: "smooth" })}>
-                View How It Works
-              </Button>
             </div>
-            <div className="mono mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-              <span>Optical / Multispectral</span>
-              <span>SAR</span>
-              <span>Bi-temporal</span>
-              <span>GeoTIFF · TIFF</span>
+
+            <div className="mono mt-10 flex flex-wrap gap-x-6 gap-y-2 text-xs uppercase tracking-wider text-[#2E4030] font-bold">
+              <span className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#789575] shadow-xs" />
+                L-Band + S-Band SAR
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#2E7D32] shadow-xs" />
+                Sentinel-2 Multispectral
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#C28E3A] shadow-xs" />
+                InSAR Sub-Centimeter
+              </span>
             </div>
           </div>
 
-          {/* Product preview */}
+          {/* Interactive Workspace Preview */}
           <WorkspacePreview onOpen={() => navigate("analyze")} />
         </div>
       </section>
 
-      {/* Capabilities */}
-      <section id="capabilities" className="mx-auto max-w-6xl px-5 py-16">
+      {/* The NASA Challenge Theme Bento */}
+      <section id="challenge" className="mx-auto max-w-7xl px-6 lg:px-10 py-20 border-t border-[#789575]/25">
         <SectionHead
-          title="One workspace for multiple remote-sensing tasks"
-          sub="A single agentic pipeline selects the specialist model each query requires."
+          badge="Earth Science In Motion"
+          title="The 4 Rhythms of Earth's Dynamic Surface"
+          sub="NISAR's active radar reveals physical structure and dielectric moisture shifts across four critical planetary phenomena."
         />
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
+          <GlassCard glow="sage" className="p-7 flex flex-col justify-between h-full bg-white/85">
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#789575]/20 text-[#141F16] border border-[#789575]/40 font-bold">
+                <Waves className="h-6 w-6 text-[#789575]" />
+              </div>
+              <h3 className="mt-5 text-base font-bold text-[#141F16]">
+                Wetlands & Floods
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-[#2E4030]">
+                Water's high dielectric constant creates specular reflection, giving instant visibility
+                into flooded communities, expanding wetlands, and soil moisture reserves.
+              </p>
+            </div>
+            <div className="mt-5 border-t border-[#789575]/25 pt-3 font-mono text-xs font-bold text-[#789575]">
+              Dielectric Constant ε ~ 80
+            </div>
+          </GlassCard>
+
+          <GlassCard glow="sage" className="p-7 flex flex-col justify-between h-full bg-white/85">
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#789575]/20 text-[#141F16] border border-[#789575]/40">
+                <Trees className="h-6 w-6 text-[#789575]" />
+              </div>
+              <h3 className="mt-5 text-base font-bold text-[#141F16]">
+                Forest Biomass
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-[#2E4030]">
+                L-band microwaves penetrate dense forest canopies to quantify aboveground biomass,
+                tracking wildfire scar recovery and illegal deforestation without cloud interference.
+              </p>
+            </div>
+            <div className="mt-5 border-t border-[#789575]/25 pt-3 font-mono text-xs font-bold text-[#789575]">
+              Volume Scattering & Depol
+            </div>
+          </GlassCard>
+
+          <GlassCard glow="ochre" className="p-7 flex flex-col justify-between h-full bg-white/85">
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C28E3A]/20 text-[#734A12] border border-[#C28E3A]/35">
+                <MountainSnow className="h-6 w-6 text-[#734A12]" />
+              </div>
+              <h3 className="mt-5 text-base font-bold text-[#141F16]">
+                Glaciers & Ice Sheets
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-[#2E4030]">
+                Differential InSAR tracks glacier velocity at centimeter-precision over 12-day orbital intervals,
+                capturing Siachen and polar ice dynamics as climate changes.
+              </p>
+            </div>
+            <div className="mt-5 border-t border-[#789575]/25 pt-3 font-mono text-xs font-bold text-[#734A12]">
+              Centimeter-Scale InSAR
+            </div>
+          </GlassCard>
+
+          <GlassCard glow="none" className="p-7 flex flex-col justify-between h-full bg-white/85">
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#789575]/20 text-[#141F16] border border-[#789575]/40">
+                <Building2 className="h-6 w-6 text-[#789575]" />
+              </div>
+              <h3 className="mt-5 text-base font-bold text-[#141F16]">
+                Urban Subsidence
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-[#2E4030]">
+                Concrete walls form geometric right-angle double-bounce reflectors, isolating urban sprawl
+                from rural buffers and detecting millimeter-level structural subsidence.
+              </p>
+            </div>
+            <div className="mt-5 border-t border-[#789575]/25 pt-3 font-mono text-xs font-bold text-[#789575]">
+              Double-Bounce Geometry
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* Capabilities Section */}
+      <section id="capabilities" className="mx-auto max-w-7xl px-6 lg:px-10 py-20 border-t border-[#789575]/25">
+        <SectionHead
+          badge="Intelligent Sensor Routing"
+          title="One Unified Workspace for Multimodal Earth Intelligence"
+          sub="Natural language queries are deterministically classified and routed to specialist spectral and remote-sensing pipelines."
+        />
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
           {capabilities.map((c) => {
             const Icon = capIcon[c.icon];
             return (
-              <Panel key={c.key} className="p-5">
-                <span className="grid h-9 w-9 place-items-center rounded-md bg-accent/10 text-accent">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-4 text-[15px] font-semibold">{c.title}</h3>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{c.body}</p>
-              </Panel>
+              <GlassCard key={c.key} className="p-7 flex flex-col justify-between h-full bg-white/85">
+                <div>
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#789575]/20 text-[#141F16] border border-[#789575]/40">
+                    <Icon className="h-6 w-6 text-[#789575]" />
+                  </span>
+                  <h3 className="mt-5 text-base font-bold text-[#141F16]">{c.title}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-[#2E4030]">{c.body}</p>
+                </div>
+              </GlassCard>
             );
           })}
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how" className="border-y border-border bg-card/40">
-        <div className="mx-auto max-w-6xl px-5 py-16">
+      {/* 7-Stage Pipeline */}
+      <section id="pipeline" className="border-t border-[#789575]/25 bg-[#DFE2C7]/50">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
           <SectionHead
-            title="How Satya Dristi works"
-            sub="Every query traverses the same auditable pipeline from ingestion to output."
+            badge="Auditable & Verifiable"
+            title="How Satya Dristi Analyzes Every Scene"
+            sub="Every query traverses the same 7-stage asynchronous pipeline from STAC ingestion to publication-grade report."
           />
-          <ol className="mt-8 grid gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+
+          <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {pipelineSteps.map((s, i) => (
               <li key={s} className="relative">
-                <div className="flex items-center gap-2">
-                  <span className="mono grid h-7 w-7 place-items-center rounded-md border border-border bg-card text-xs font-semibold text-accent">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  {i < pipelineSteps.length - 1 && (
-                    <span className="hidden h-px flex-1 bg-border lg:block" />
-                  )}
-                </div>
-                <p className="mt-3 text-[13.5px] font-medium leading-snug">{s}</p>
+                <GlassCard className="p-6 h-full flex flex-col justify-between bg-white/90">
+                  <div className="flex items-center justify-between">
+                    <span className="mono grid h-8 w-8 place-items-center rounded-xl border border-[#789575]/45 bg-[#789575] text-xs font-bold text-white shadow-xs">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="mono text-[10px] text-[#2E4030] uppercase font-bold">
+                      Stage {i + 1}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-sm font-bold text-[#141F16] leading-snug">
+                    {s}
+                  </p>
+                </GlassCard>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* Evidence-grounded */}
-      <section id="evidence" className="mx-auto max-w-6xl px-5 py-16">
-        <SectionHead
-          title="Built for evidence-grounded analysis"
-          sub="Results are inseparable from the evidence, confidence, and trace that produced them."
-        />
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: IconEvidence, t: "Visual evidence", b: "Overlays, masks and change maps registered to the source imagery." },
-            { icon: IconStatus, t: "Confidence score", b: "Derived from agreement between available specialist predictions." },
-            { icon: IconTrace, t: "Execution trace", b: "Every stage, tool and parameter recorded for audit." },
-            { icon: IconDownload, t: "Downloadable report", b: "Export a structured analysis package for the record." },
-          ].map((x) => (
-            <Panel key={x.t} className="p-5">
-              <x.icon className="h-5 w-5 text-accent" />
-              <h3 className="mt-3 text-[14px] font-semibold">{x.t}</h3>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{x.b}</p>
-            </Panel>
-          ))}
-        </div>
-      </section>
-
-      {/* Workflows */}
-      <section id="workflows" className="border-t border-border bg-card/40">
-        <div className="mx-auto max-w-6xl px-5 py-16">
-          <SectionHead title="Designed for real remote-sensing workflows" />
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {domains.map((d) => (
-              <Panel key={d.title} className="flex items-start gap-3 p-4">
-                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />
-                <div>
-                  <h3 className="text-[14px] font-semibold">{d.title}</h3>
-                  <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">{d.body}</p>
-                </div>
-              </Panel>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-5 py-16">
-        <Panel raised className="flex flex-col items-start justify-between gap-5 p-8 sm:flex-row sm:items-center">
+      {/* Final Call to Action */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-10 py-20 border-t border-[#789575]/25">
+        <GlassCard
+          glow="sage"
+          className="flex flex-col items-start justify-between gap-6 p-8 sm:flex-row sm:items-center sm:p-12 bg-white/90"
+        >
           <div>
-            <h2 className="text-xl font-semibold tracking-tight">Analyze your first scene</h2>
-            <p className="mt-1 text-[13.5px] text-muted-foreground">
-              Upload imagery, ask a question, and inspect the full execution trace.
+            <GlowBadge tone="sage">Ready For Exploration</GlowBadge>
+            <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-[#141F16] sm:text-3xl">
+              Track Earth's Surface Changes Today
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-[#233325] font-medium">
+              Select any study area on Earth, query SAR radar backscatter, and generate
+              verifiable intelligence for active microwave Earth observation.
             </p>
           </div>
-          <Button variant="accent" onClick={() => navigate("analyze")} icon={<IconArrow className="h-4 w-4" />}>
-            Open Analysis Workspace
-          </Button>
-        </Panel>
+
+          <div className="flex flex-wrap gap-4">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => navigate("dashboard")}
+              icon={<ArrowRight className="h-4 w-4" />}
+            >
+              Enter Story Dashboard
+            </Button>
+          </div>
+        </GlassCard>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <footer className="border-t border-[#789575]/25 bg-[#D7DAC0]/70 text-[#141F16]">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:px-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Brand onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
-            <p className="mt-3 max-w-xs text-[12.5px] leading-relaxed text-muted-foreground">
-              Interactive multimodal satellite intelligence for evidence-grounded analysis.
+            <p className="mt-4 max-w-xs text-xs leading-relaxed text-[#2E4030] font-medium">
+              Interactive multimodal satellite intelligence for tracking Earth's surface change.
+              Active microwave and multispectral Earth observation platform.
             </p>
           </div>
-          <FooterCol title="Product" links={["Analysis Workspace", "Capabilities", "Reports", "Release notes"]} />
-          <FooterCol title="Documentation" links={["Getting started", "Task reference", "Model catalog", "API"]} />
-          <FooterCol
-            title="Legal"
-            links={["Privacy Policy", "Terms & Conditions", "Contact"]}
-            onLink={(l) => {
-              if (l === "Privacy Policy") navigate("privacy");
-              if (l === "Terms & Conditions") navigate("terms");
-            }}
-          />
+
+          <div>
+            <Eyebrow>Satellite Data Sources</Eyebrow>
+            <ul className="mt-4 space-y-2.5 text-xs text-[#2E4030] font-medium">
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">NASA Earthdata Search</li>
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">ASF SAR Vertex Archive</li>
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">NISAR Data User Guide</li>
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">RADARSAT RCM & SAOCOM</li>
+            </ul>
+          </div>
+
+          <div>
+            <Eyebrow>Modality Tools</Eyebrow>
+            <ul className="mt-4 space-y-2.5 text-xs text-[#2E4030] font-medium">
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">Visual Question Answering</li>
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">Bi-Temporal Change (CVA)</li>
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">Optical + SAR Cross-Fusion</li>
+              <li className="hover:text-[#789575] transition-colors cursor-pointer">Dynamic Spatial Grounding</li>
+            </ul>
+          </div>
+
+          <div>
+            <Eyebrow>Navigation</Eyebrow>
+            <ul className="mt-4 space-y-2.5 text-xs text-[#2E4030] font-medium">
+              <li>
+                <button
+                  onClick={() => navigate("dashboard")}
+                  className="hover:text-[#789575] transition-colors text-left cursor-pointer font-medium"
+                >
+                  Story Dashboard
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("analyze")}
+                  className="hover:text-[#789575] transition-colors text-left cursor-pointer font-medium"
+                >
+                  Analysis Workspace
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("reports")}
+                  className="hover:text-[#789575] transition-colors text-left cursor-pointer font-medium"
+                >
+                  Verified Reports
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className="border-t border-border">
-          <div className="mono mx-auto flex max-w-6xl flex-col gap-2 px-5 py-4 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <span>© 2026 Satya Dristi. Demonstration interface — sample data.</span>
+
+        <div className="border-t border-[#789575]/20">
+          <div className="mono mx-auto flex max-w-7xl flex-col gap-2 px-6 lg:px-10 py-5 text-xs text-[#2E4030] font-semibold sm:flex-row sm:items-center sm:justify-between">
+            <span>© 2026 Satya Dristi · Active Microwave Remote Sensing</span>
             <span>Multimodal Earth Observation Intelligence</span>
           </div>
         </div>
@@ -218,84 +420,86 @@ export function Landing({ navigate }: { navigate: (r: Route) => void }) {
   );
 }
 
-function SectionHead({ title, sub }: { title: string; sub?: string }) {
+function SectionHead({
+  badge,
+  title,
+  sub,
+}: {
+  badge?: string;
+  title: string;
+  sub?: string;
+}) {
   return (
-    <div className="max-w-2xl">
-      <h2 className="text-2xl font-semibold tracking-tight sm:text-[28px]">{title}</h2>
-      {sub && <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{sub}</p>}
-    </div>
-  );
-}
-
-function FooterCol({ title, links, onLink }: { title: string; links: string[]; onLink?: (l: string) => void }) {
-  return (
-    <div>
-      <Eyebrow>{title}</Eyebrow>
-      <ul className="mt-3 space-y-2">
-        {links.map((l) => (
-          <li key={l}>
-            <button
-              onClick={() => onLink?.(l)}
-              className="focus-ring rounded text-[13px] text-muted-foreground hover:text-foreground"
-            >
-              {l}
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="max-w-3xl">
+      {badge && <GlowBadge tone="sage">{badge}</GlowBadge>}
+      <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[#141F16] sm:text-4xl">
+        {title}
+      </h2>
+      {sub && <p className="mt-3 text-sm leading-relaxed text-[#233325] font-medium">{sub}</p>}
     </div>
   );
 }
 
 function WorkspacePreview({ onOpen }: { onOpen: () => void }) {
   return (
-    <Panel raised className="overflow-hidden p-0 fade-up">
-      <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+    <GlassCard glow="sage" className="p-0 overflow-hidden fade-up bg-white/90">
+      <div className="flex items-center justify-between border-b border-[#789575]/25 px-6 py-4 bg-[#E5E8CE]/80">
         <div className="flex items-center gap-2">
-          <span className="mono text-[10.5px] uppercase tracking-wide text-muted-foreground">Analysis Workspace</span>
-          <Badge tone="accent">Demo</Badge>
+          <span className="mono text-xs uppercase tracking-wider text-[#2E4030] font-bold">
+            Analysis Workspace
+          </span>
+          <GlowBadge tone="sage">NISAR L-band Active</GlowBadge>
         </div>
-        <div className="flex gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-border" />
-          <span className="h-2 w-2 rounded-full bg-border" />
-          <span className="h-2 w-2 rounded-full bg-border" />
+        <div className="flex gap-2">
+          <span className="h-2 w-2 rounded-full bg-[#789575]/40" />
+          <span className="h-2 w-2 rounded-full bg-[#789575]/40" />
+          <span className="h-2 w-2 rounded-full bg-[#789575]/40" />
         </div>
       </div>
-      <div className="grid gap-3 p-3 sm:grid-cols-[1.4fr_1fr]">
-        <SatImage bbox={REGIONS.urbanWater} className="min-h-[220px] rounded-md border border-border">
+
+      <div className="grid gap-5 p-5 sm:grid-cols-[1.3fr_1fr]">
+        <SatImage
+          bbox={REGIONS.urbanWater}
+          className="min-h-[250px] rounded-2xl border border-[#789575]/35"
+        >
           <OverlayGrounding />
-          <ScaleTag>Optical · grounding</ScaleTag>
+          <ScaleTag>NISAR Radar · Hyderabad AOI</ScaleTag>
         </SatImage>
-        <div className="flex flex-col gap-3">
+
+        <div className="flex flex-col justify-between gap-3">
           <div>
-            <Eyebrow>Query</Eyebrow>
-            <p className="mt-1 text-[12.5px] leading-snug">
-              "Highlight the water body referred to in the query."
+            <Eyebrow>Challenge Query</Eyebrow>
+            <p className="mt-1.5 text-xs font-bold leading-snug text-[#141F16]">
+              "Detect wetland boundary contraction and urban built-up expansion."
             </p>
           </div>
-          <div className="border-t border-border pt-2">
-            <Eyebrow>Answer</Eyebrow>
-            <p className="mt-1 text-[12.5px] leading-snug">
-              Located a single contiguous reservoir in the central-west quadrant.
+
+          <div className="border-t border-[#789575]/25 pt-2.5">
+            <Eyebrow>Radar Interpretation</Eyebrow>
+            <p className="mt-1 text-xs leading-relaxed text-[#233325] font-medium">
+              High-dielectric specular reservoir mapped in center; double-bounce urban structures confirmed along perimeter.
             </p>
           </div>
-          <div className="mt-auto border-t border-border pt-3">
+
+          <div className="border-t border-[#789575]/25 pt-2.5">
             <Confidence level="High" agreements={[]} compact />
           </div>
-          <div className="flex items-center gap-1.5 rounded-md border border-border bg-muted/50 px-2 py-1.5">
-            <IconLayers className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="mono text-[10px] uppercase tracking-wide text-muted-foreground">
-              Optical · Grounding · Grid
+
+          <div className="flex items-center gap-2 rounded-xl border border-[#789575]/35 bg-[#E5E8CE]/60 px-3.5 py-2">
+            <IconLayers className="h-4 w-4 text-[#789575]" />
+            <span className="mono text-[10px] uppercase tracking-wide text-[#141F16] font-bold">
+              Dual-Pol SAR · InSAR · Grounding
             </span>
           </div>
         </div>
       </div>
+
       <button
         onClick={onOpen}
-        className="focus-ring flex w-full items-center justify-center gap-2 border-t border-border py-2.5 text-[12.5px] font-medium text-accent hover:bg-accent/5"
+        className="focus-ring flex w-full items-center justify-center gap-2 border-t border-[#789575]/25 py-3.5 text-xs font-bold text-[#141F16] hover:bg-[#789575]/15 hover:text-[#789575] transition-colors cursor-pointer"
       >
-        Open in workspace <IconArrow className="h-3.5 w-3.5" />
+        Open In Interactive Workspace <ArrowRight className="h-3.5 w-3.5" />
       </button>
-    </Panel>
+    </GlassCard>
   );
 }

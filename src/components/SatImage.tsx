@@ -252,18 +252,18 @@ export function OverlayDynamicGrounding({
             <path
               d={pathD}
               fill="none"
-              stroke="#79ed91"
+              stroke="#00e5ff"
               strokeWidth="1.8"
-              opacity="0.38"
+              opacity="0.45"
               strokeLinejoin="round"
               strokeLinecap="round"
             />
             {/* Exact difference contour polygon with sharp curves */}
             <path
               d={pathD}
-              fill="#4dbe55"
-              fillOpacity="0.22"
-              stroke="#4dbe55"
+              fill="#0ea5e9"
+              fillOpacity="0.25"
+              stroke="#00e5ff"
               strokeWidth="0.85"
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -273,7 +273,7 @@ export function OverlayDynamicGrounding({
             <path
               d={`M ${leaderStartX.toFixed(2)} ${leaderStartY.toFixed(2)} L ${elbowX.toFixed(2)} ${elbowY.toFixed(2)} L ${cx.toFixed(2)} ${cy.toFixed(2)}`}
               fill="none"
-              stroke="#79ed91"
+              stroke="#00e5ff"
               strokeWidth="0.5"
               strokeDasharray="1.4 0.8"
               opacity="0.95"
@@ -281,16 +281,16 @@ export function OverlayDynamicGrounding({
             {/* Arrowhead pointing exactly at the difference */}
             <polygon
               points={`${cx.toFixed(2)},${cy.toFixed(2)} ${p1x.toFixed(2)},${p1y.toFixed(2)} ${p2x.toFixed(2)},${p2y.toFixed(2)}`}
-              fill="#79ed91"
+              fill="#00e5ff"
             />
 
             {/* Precision pinpoint target reticle */}
-            <circle cx={cx} cy={cy} r="2.4" fill="none" stroke="#79ed91" strokeWidth="0.38" strokeDasharray="1.2 0.8" opacity="0.9" />
-            <circle cx={cx} cy={cy} r="0.8" fill="#79ed91" stroke="#ffffff" strokeWidth="0.25" />
-            <line x1={cx - 3.6} y1={cy} x2={cx - 1.2} y2={cy} stroke="#79ed91" strokeWidth="0.4" strokeLinecap="round" />
-            <line x1={cx + 1.2} y1={cy} x2={cx + 3.6} y2={cy} stroke="#79ed91" strokeWidth="0.4" strokeLinecap="round" />
-            <line x1={cx} y1={cy - 3.6} x2={cx} y2={cy - 1.2} stroke="#79ed91" strokeWidth="0.4" strokeLinecap="round" />
-            <line x1={cx} y1={cy + 1.2} x2={cx} y2={cy + 3.6} stroke="#79ed91" strokeWidth="0.4" strokeLinecap="round" />
+            <circle cx={cx} cy={cy} r="2.4" fill="none" stroke="#00e5ff" strokeWidth="0.38" strokeDasharray="1.2 0.8" opacity="0.9" />
+            <circle cx={cx} cy={cy} r="0.8" fill="#00e5ff" stroke="#ffffff" strokeWidth="0.25" />
+            <line x1={cx - 3.6} y1={cy} x2={cx - 1.2} y2={cy} stroke="#00e5ff" strokeWidth="0.4" strokeLinecap="round" />
+            <line x1={cx + 1.2} y1={cy} x2={cx + 3.6} y2={cy} stroke="#00e5ff" strokeWidth="0.4" strokeLinecap="round" />
+            <line x1={cx} y1={cy - 3.6} x2={cx} y2={cy - 1.2} stroke="#00e5ff" strokeWidth="0.4" strokeLinecap="round" />
+            <line x1={cx} y1={cy + 1.2} x2={cx} y2={cy + 3.6} stroke="#00e5ff" strokeWidth="0.4" strokeLinecap="round" />
 
             {/* Modern dark badge with neon accent */}
             <rect
@@ -298,19 +298,19 @@ export function OverlayDynamicGrounding({
               y={badgeY}
               width={labelWidth}
               height={labelHeight}
-              rx="1"
-              fill="#141c18"
+              rx="1.2"
+              fill="#070c1e"
               fillOpacity="0.96"
-              stroke="#4dbe55"
+              stroke="#00e5ff"
               strokeWidth="0.4"
             />
-            <circle cx={badgeX + 2.2} cy={badgeY + labelHeight / 2} r="0.65" fill="#79ed91" />
+            <circle cx={badgeX + 2.2} cy={badgeY + labelHeight / 2} r="0.65" fill="#00e5ff" />
             <text
               x={badgeX + 3.8}
               y={badgeY + labelHeight / 2 + 0.8}
               fontSize="2.4"
-              fill="#79ed91"
-              fontFamily="'IBM Plex Mono', monospace"
+              fill="#00e5ff"
+              fontFamily="'JetBrains Mono', monospace"
               fontWeight="600"
             >
               {label}
@@ -344,23 +344,22 @@ export function OverlayImageLayer({ src, opacity = 0.8 }: { src?: string | null;
 export function OverlayChange() {
   return (
     <svg className={overlaySquare} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      {/* New built-up — lower-left settlement (Emerald Slate Green #4DBE55) */}
-      <path d="M7 57 L30 59 L28 80 L5 77 Z" fill="#4dbe55" fillOpacity="0.25" stroke="#4dbe55" strokeWidth="0.6" strokeDasharray="2 1.2" />
-      {/* New water — river channel across centre-right (Slate Blue-Grey #698696) */}
-      <path d="M55 49 L90 51 L88 64 L53 61 Z" fill="#698696" fillOpacity="0.30" stroke="#698696" strokeWidth="0.6" strokeDasharray="2 1.2" />
+      {/* New built-up — lower-left settlement (Emerald #10b981) */}
+      <path d="M7 57 L30 59 L28 80 L5 77 Z" fill="#10b981" fillOpacity="0.28" stroke="#10b981" strokeWidth="0.75" strokeDasharray="2 1.2" />
+      {/* New water — river channel across centre-right (Electric Cyan #00e5ff) */}
+      <path d="M55 49 L90 51 L88 64 L53 61 Z" fill="#00e5ff" fillOpacity="0.32" stroke="#00e5ff" strokeWidth="0.75" strokeDasharray="2 1.2" />
     </svg>
   );
 }
 
-/** Text-grounded region — a single precise bounding box on the water body
- *  (the river channel across the centre-right of the corridor scene). */
+/** Text-grounded region — a single precise bounding box on the water body */
 export function OverlayGrounding({ label = "water_body · 0.94" }: { label?: string }) {
   return (
     <svg className={overlaySquare} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <rect x="54" y="48" width="37" height="17" fill="none" stroke="#79ed91" strokeWidth="0.7" />
-      <rect x="54" y="48" width="37" height="17" fill="#79ed91" fillOpacity="0.14" />
-      <rect x="54" y="43.5" width={label.length * 1.55 + 4} height="4.5" fill="#141c18" fillOpacity="0.95" />
-      <text x="55.5" y="46.9" fontSize="2.6" fill="#79ed91" fontFamily="'IBM Plex Mono', monospace">
+      <rect x="54" y="48" width="37" height="17" fill="none" stroke="#00e5ff" strokeWidth="0.8" />
+      <rect x="54" y="48" width="37" height="17" fill="#00e5ff" fillOpacity="0.16" />
+      <rect x="54" y="43.5" width={label.length * 1.55 + 4} height="4.5" fill="#070c1e" fillOpacity="0.95" />
+      <text x="55.5" y="46.9" fontSize="2.6" fill="#00e5ff" fontFamily="'JetBrains Mono', monospace">
         {label}
       </text>
     </svg>
@@ -369,7 +368,7 @@ export function OverlayGrounding({ label = "water_body · 0.94" }: { label?: str
 
 export function ScaleTag({ children }: { children: ReactNode }) {
   return (
-    <span className="mono absolute left-2 top-2 z-10 rounded-sm bg-[#141c18]/90 border border-[#283630] px-1.5 py-0.5 text-[9.5px] tracking-tight text-[#bebebe]">
+    <span className="mono absolute left-3 top-3 z-10 rounded-lg bg-[#050917]/90 border border-white/10 px-2 py-1 text-[10px] tracking-tight text-slate-300 backdrop-blur-md">
       {children}
     </span>
   );

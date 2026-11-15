@@ -66,7 +66,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
   const aoiRequestIdRef = useRef<number>(0);
 
   // When active analysis mode changes, preserve primary AOI and scene selection
-  // so dynamic AI query routing does not wipe out the user's selected map region
+  // so dynamic query routing does not wipe out the user's selected map region
   useEffect(() => {
     if (mode === "single") {
       setSecondaryScene(null);
@@ -329,7 +329,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
         if (resBefore.status === "rejected" && resAfter.status === "rejected") {
           const rawMsg = ((resBefore as any).reason?.message || "") + ((resAfter as any).reason?.message || "");
           if (rawMsg.includes("Failed to fetch") || rawMsg.includes("NetworkError")) {
-            setErrorMsg("Backend server is warming up. Please wait a moment and click 'Search Satellite Scenes' again.");
+            setErrorMsg("Backend service is connecting or offline (http://127.0.0.1:8000). Please ensure the FastAPI backend is running and click 'Search Satellite Scenes' again.");
           } else {
             setErrorMsg("No satellite scenes found for the selected years.");
           }
@@ -373,7 +373,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
         if (reqId && reqId !== aoiRequestIdRef.current) return;
         const rawMsg = err?.message || "";
         if (rawMsg.includes("Failed to fetch") || rawMsg.includes("NetworkError")) {
-          setErrorMsg("Backend server is warming up. Please wait a moment and click 'Search Satellite Scenes' again.");
+          setErrorMsg("Backend service is connecting or offline (http://127.0.0.1:8000). Please ensure the FastAPI backend is running and click 'Search Satellite Scenes' again.");
         } else {
           setErrorMsg(err.message || "No satellite scenes found for the selected years.");
         }
@@ -413,7 +413,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
         if (resOpt.status === "rejected" && resSar.status === "rejected") {
           const rawMsg = ((resOpt as any).reason?.message || "") + ((resSar as any).reason?.message || "");
           if (rawMsg.includes("Failed to fetch") || rawMsg.includes("NetworkError")) {
-            setErrorMsg("Backend server is warming up. Please wait a moment and click 'Search Satellite Scenes' again.");
+            setErrorMsg("Backend service is connecting or offline (http://127.0.0.1:8000). Please ensure the FastAPI backend is running and click 'Search Satellite Scenes' again.");
           } else {
             setErrorMsg("No satellite scenes found for the selected area.");
           }
@@ -457,7 +457,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
         if (reqId && reqId !== aoiRequestIdRef.current) return;
         const rawMsg = err?.message || "";
         if (rawMsg.includes("Failed to fetch") || rawMsg.includes("NetworkError")) {
-          setErrorMsg("Backend server is warming up. Please wait a moment and click 'Search Satellite Scenes' again.");
+          setErrorMsg("Backend service is connecting or offline (http://127.0.0.1:8000). Please ensure the FastAPI backend is running and click 'Search Satellite Scenes' again.");
         } else {
           setErrorMsg(err.message || "No satellite scenes found for the selected area.");
         }
@@ -509,7 +509,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
       if (reqId && reqId !== aoiRequestIdRef.current) return;
       const rawMsg = err?.message || "";
       if (rawMsg.includes("Failed to fetch") || rawMsg.includes("NetworkError")) {
-        setErrorMsg("Backend server is warming up. Please click 'Search Satellite Scenes' again.");
+        setErrorMsg("Backend service is connecting or offline (http://127.0.0.1:8000). Please ensure the FastAPI backend is running and click 'Search Satellite Scenes' again.");
       } else {
         setErrorMsg(err.message || "No scenes found for the selected criteria.");
       }

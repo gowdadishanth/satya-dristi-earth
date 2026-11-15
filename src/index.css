@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -24,74 +24,48 @@
   --color-warn: var(--warn);
   --color-err: var(--err);
 
-  /* Color scheme 49: Slate Direct Utility Tokens */
-  --color-slate-silver: #bebebe;
-  --color-slate-mint: #79ed91;
-  --color-slate-emerald: #4dbe55;
-  --color-slate-mineral: #71776d;
-  --color-slate-blue: #698696;
-  --color-slate-canvas: #101413;
-  --color-slate-surface: #161c1a;
+  /* Pale Sage Ivory (#E5E8CE) & Muted Forest Sage (#789575) Palette */
+  --color-sage-ivory: #E5E8CE;
+  --color-sage-forest: #789575;
+  --color-forest-deep: #141F16;
+  --color-forest-body: #233325;
+  --color-forest-muted: #2E4030;
+  --color-sage-accent: #5D7A5A;
+  --color-earth-amber: #C28E3A;
 }
 
 :root {
-  /* Color scheme 49: Slate (Earth Observation / Geospatial Intelligence):
-     #BEBEBE (Light Slate Silver)
-     #79ED91 (Pastel Mint Green)
-     #4DBE55 (Emerald Slate Green)
-     #71776D (Deep Mineral Slate)
-     #698696 (Slate Blue-Grey)
-  */
-  --background: #101413;
-  --foreground: #e6ede8;
-  --card: #161c1a;
-  --card-foreground: #e6ede8;
-  --panel: #161c1a;
-  --primary: #4dbe55;
-  --primary-foreground: #081a0c;
-  --secondary: #698696;
-  --secondary-foreground: #f5f8fa;
-  --accent: #79ed91;
-  --accent-foreground: #071a0b;
-  --muted: #1f2824;
-  --muted-foreground: #8e9e96;
-  --border: #283630;
-  --ring: #79ed91;
-  --ok: #79ed91;
-  --warn: #d4a348;
-  --err: #e05353;
-  --shadow-color: 150 40% 3%;
-}
-
-.dark {
-  /* Color scheme 49: Slate Dark Mode */
-  --background: #0d1110;
-  --foreground: #e6ede8;
-  --card: #131816;
-  --card-foreground: #e6ede8;
-  --panel: #131816;
-  --primary: #4dbe55;
-  --primary-foreground: #081a0c;
-  --secondary: #698696;
-  --secondary-foreground: #f5f8fa;
-  --accent: #79ed91;
-  --accent-foreground: #071a0b;
-  --muted: #1a221f;
-  --muted-foreground: #8e9e96;
-  --border: #232f2a;
-  --ring: #79ed91;
-  --ok: #79ed91;
-  --warn: #d4a348;
-  --err: #e05353;
-  --shadow-color: 150 50% 2%;
+  /* Editorial Light Earth-Observation Theme: #E5E8CE (Pale Sage Ivory) & #789575 (Muted Forest Sage) */
+  --background: #E5E8CE;
+  --foreground: #141F16;
+  --card: rgba(255, 255, 255, 0.88);
+  --card-foreground: #141F16;
+  --panel: rgba(244, 246, 235, 0.95);
+  --primary: #789575;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1F3022;
+  --secondary-foreground: #E5E8CE;
+  --accent: #5D7A5A;
+  --accent-foreground: #FFFFFF;
+  --muted: rgba(120, 149, 117, 0.16);
+  --muted-foreground: #2E4030;
+  --border: rgba(120, 149, 117, 0.40);
+  --ring: #789575;
+  --ok: #2E7D32;
+  --warn: #C28E3A;
+  --err: #D32F2F;
+  --shadow-color: 114 15% 25%;
 }
 
 * {
   border-color: var(--border);
+  box-sizing: border-box;
 }
 
 html {
   scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+  background-color: #E5E8CE;
 }
 
 body {
@@ -100,6 +74,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 .mono {
@@ -107,119 +82,159 @@ body {
   font-feature-settings: 'zero';
 }
 
-html[data-density='compact'] body {
-  font-size: 14.5px;
-}
-html[data-density='compact'] .panel {
-  border-radius: 6px;
-}
-
-::selection {
-  background: color-mix(in srgb, var(--primary) 18%, transparent);
-}
-
-/* ---- Scrollbar: hidden until scroll ---- */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-}
-*:hover,
-*:focus-within {
-  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 45%, transparent) transparent;
-}
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 999px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-*:hover::-webkit-scrollbar-thumb,
-*:focus-within::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--muted-foreground) 40%, transparent);
-  background-clip: padding-box;
-}
-
 /* =========================================================
-   PANEL SYSTEM — two treatments only
+   PALE SAGE IVORY & MUTED FOREST SAGE CANVAS & CARDS
    ========================================================= */
+
+/* Ambient canvas with soft botanical watercolor highlights on #E5E8CE */
+.app-bg {
+  background-color: #E5E8CE;
+  background-image:
+    radial-gradient(circle 900px at 10% 10%, rgba(120, 149, 117, 0.18), transparent 70%),
+    radial-gradient(circle 800px at 85% 20%, rgba(255, 255, 255, 0.55), transparent 65%),
+    radial-gradient(circle 1000px at 50% 90%, rgba(120, 149, 117, 0.14), transparent 70%);
+  background-attachment: fixed;
+  color: #18261B;
+}
+
+/* Frosted Earth Ivory Glass Cards */
+.glass-card {
+  background: rgba(248, 249, 243, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(120, 149, 117, 0.32);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px -10px rgba(60, 80, 60, 0.10), 0 1px 3px rgba(60, 80, 60, 0.05);
+  color: #18261B;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(120, 149, 117, 0.65);
+  box-shadow: 0 18px 40px -12px rgba(60, 80, 60, 0.16), 0 0 20px -4px rgba(120, 149, 117, 0.2);
+}
+
+.glass-card-glow,
+.glass-card-sage {
+  background: rgba(252, 253, 248, 0.90);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(120, 149, 117, 0.45);
+  border-radius: 20px;
+  box-shadow: 0 12px 35px -10px rgba(60, 80, 60, 0.12), 0 0 25px -4px rgba(120, 149, 117, 0.15);
+  color: #18261B;
+}
+
+/* Glass Sidebar & Header in Pale Sage Ivory */
+.glass-sidebar {
+  background: rgba(229, 232, 206, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1.5px solid rgba(120, 149, 117, 0.30);
+  color: #18261B;
+}
+
+.glass-header {
+  background: rgba(229, 232, 206, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1.5px solid rgba(120, 149, 117, 0.30);
+  color: #18261B;
+}
+
+/* Legacy panel support */
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition:
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+  background: rgba(248, 249, 243, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(120, 149, 117, 0.30);
+  border-radius: 16px;
+  color: #18261B;
+  transition: all 0.25s ease;
 }
 
-/* --- Default: flat editorial surfaces --- */
 .theme-default .panel {
-  box-shadow: none;
+  box-shadow: 0 10px 25px -10px rgba(60, 80, 60, 0.08);
 }
+
 .theme-default .panel-raised {
-  box-shadow: 0 10px 30px -18px hsl(var(--shadow-color) / 0.35);
+  box-shadow: 0 16px 36px -12px rgba(60, 80, 60, 0.14), 0 0 20px -5px rgba(120, 149, 117, 0.15);
 }
 
-/* A quiet, borderless block used to avoid the "everything is a card" look */
-.block-flat {
-  background: transparent;
-  border: none;
+/* Story Chapter Header */
+.story-chapter {
+  position: relative;
+  padding: 0.5rem 0;
 }
 
-/* --- NeoMorphism: soft raised surfaces --- */
-.theme-neo .panel {
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  box-shadow:
-    5px 5px 14px hsl(var(--shadow-color) / 0.7),
-    -5px -5px 14px color-mix(in srgb, rgba(121, 237, 145, 0.04), transparent);
-}
-.dark.theme-neo .panel {
-  box-shadow:
-    5px 5px 14px hsl(var(--shadow-color) / 0.85),
-    -5px -5px 14px color-mix(in srgb, rgba(121, 237, 145, 0.05), transparent);
-}
-.theme-neo .panel-inset {
-  box-shadow:
-    inset 3px 3px 7px hsl(var(--shadow-color) / 0.5),
-    inset -3px -3px 7px color-mix(in srgb, rgba(105, 134, 150, 0.04), transparent);
+.story-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(120, 149, 117, 0.18);
+  border: 1.5px solid rgba(120, 149, 117, 0.5);
+  color: #1E3022;
+  box-shadow: 0 2px 8px rgba(120, 149, 117, 0.15);
 }
 
-/* focus ring */
+/* Animations & Keyframes */
+@keyframes radarSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.fade-up {
+  animation: fadeUp 0.35s ease-out both;
+}
+
+.radar-sweep {
+  animation: radarSweep 3.5s linear infinite;
+}
+
+.pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Focus ring */
 .focus-ring:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
-/* App Background: subtle Slate Earth Observation ambient wash */
-.app-bg {
-  background-color: var(--background);
-  background-image:
-    radial-gradient(ellipse 55% 35% at 15% 0%, rgba(77, 190, 85, 0.09), transparent 70%),
-    radial-gradient(ellipse 45% 30% at 85% 10%, rgba(105, 134, 150, 0.08), transparent 70%);
-}
-.dark .app-bg {
-  background-color: var(--background);
-  background-image:
-    radial-gradient(ellipse 55% 35% at 15% 0%, rgba(77, 190, 85, 0.12), transparent 70%),
-    radial-gradient(ellipse 45% 30% at 85% 10%, rgba(121, 237, 145, 0.09), transparent 70%);
+/* Modern refined scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.fade-up {
-  animation: fadeUp 0.3s ease both;
+::-webkit-scrollbar-track {
+  background: rgba(229, 232, 206, 0.7);
 }
 
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 149, 117, 0.45);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 149, 117, 0.75);
+}
