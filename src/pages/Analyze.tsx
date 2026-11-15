@@ -15,7 +15,9 @@ import {
   IconLayers, IconZoomIn, IconZoomOut, IconReset, IconChevron,
   IconTrace, IconDownload, IconGlobe, IconUpload, IconFile,
 } from "../components/icons";
-import { api, getAnalysisImageUrl, type Scene, type AOIPreview, type AnalysisRecord, type AnalysisJobStatus } from "../lib/api";
+import { api, getAuthToken, getAnalysisImageUrl, type Scene, type AOIPreview, type AnalysisRecord, type AnalysisJobStatus } from "../lib/api";
+import { authService } from "../lib/firebase";
+import { GoogleIcon } from "../components/AuthModal";
 
 type LayerKey = "optical" | "sar" | "change" | "grounding" | "grid";
 const REGION = REGIONS.urbanWater;
@@ -66,13 +68,23 @@ const sampleFiles: Record<Mode, { name: string; modality: string; res: string; s
 
 function formatErrorMessage(raw: string): string {
   if (!raw) return "Analysis failed. Please try again.";
-  if (raw.includes("503") || raw.toLowerCase().includes("high demand") || raw.toLowerCase().includes("unavailable")) {
+  const lower = raw.toLowerCase();
+  if (
+    lower.includes("authorization") ||
+    lower.includes("authentication") ||
+    lower.includes("unauthorized") ||
+    lower.includes("sign in") ||
+    lower.includes("token")
+  ) {
+    return "Please sign in with your Google account to run satellite analysis.";
+  }
+  if (lower.includes("503") || lower.includes("high demand") || lower.includes("unavailable")) {
     return "The remote sensing analysis service was temporarily experiencing high demand. Automatic retry is enabled, please click Retry Analysis below.";
   }
-  if (raw.includes("429") || raw.toLowerCase().includes("quota") || raw.toLowerCase().includes("rate limit")) {
+  if (lower.includes("429") || lower.includes("quota") || lower.includes("rate limit")) {
     return "Analysis service rate limit reached. Please wait a few seconds and click Retry Analysis.";
   }
-  if (raw.includes("401") || raw.toLowerCase().includes("unauthorized") || raw.toLowerCase().includes("api key")) {
+  if (lower.includes("401") || lower.includes("api key")) {
     return "Invalid or unauthorized service key. Please check your configuration in backend/.env.";
   }
   const match = raw.match(/'message':\s*['"]([^'"]+)['"]/);
@@ -153,6 +165,15 @@ export function Analyze() {
   // Launch Real Asynchronous Analysis
   const run = async () => {
     if (!hasImagery || anyInvalid || !query.trim() || phase === "running") return;
+
+    // Verify user is authenticated with Google before submitting
+    const user = authService.getCurrentUser();
+    const token = await getAuthToken(false);
+    if (!user && !token) {
+      window.dispatchEvent(new CustomEvent("open-auth-modal"));
+      setAnalysisError("Authentication required: Please sign in with your Google account to run satellite analysis.");
+      return;
+    }
 
     setPhase("running");
     setAnalysisError(null);
@@ -616,24 +637,38 @@ export function Analyze() {
           </div>
         </div>
 
-        {/* Error Notification with User-Friendly Message & Retry Action */}
+        {/* Error Notification with User-Friendly Message & Action */}
         {analysisError && (
-          <div className="rounded-md border border-[color:var(--err)]/40 bg-[color:var(--err)]/8 p-3 space-y-2">
+          <div className="rounded-xl border border-[color:var(--err)]/40 bg-[color:var(--err)]/10 p-3.5 space-y-2.5">
             <div className="flex items-start gap-2">
               <IconTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--err)]" />
               <p className="text-[12px] leading-snug text-[color:var(--err)] font-medium">
                 {formatErrorMessage(analysisError)}
               </p>
             </div>
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={run}
-                disabled={phase === "running"}
-                className="px-2.5 py-1 rounded bg-[color:var(--err)] text-white text-[11px] font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
-              >
-                Retry Analysis ↻
-              </button>
+            <div className="flex items-center justify-end gap-2 pt-1">
+              {(analysisError.toLowerCase().includes("authoriz") ||
+                analysisError.toLowerCase().includes("authenticat") ||
+                analysisError.toLowerCase().includes("sign in") ||
+                analysisError.toLowerCase().includes("token")) ? (
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-auth-modal"))}
+                  className="px-3 py-1.5 rounded-xl bg-[#789575] hover:bg-[#688565] text-white text-[11.5px] font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+                >
+                  <GoogleIcon className="h-3.5 w-3.5" />
+                  Sign In with Google
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={run}
+                  disabled={phase === "running"}
+                  className="px-2.5 py-1 rounded bg-[color:var(--err)] text-white text-[11px] font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
+                >
+                  Retry Analysis ↻
+                </button>
+              )}
             </div>
           </div>
         )}
