@@ -71,6 +71,13 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retryCoun
     }
   }
 
+  // Automatically retry once if 502, 503, or 504 occurs (handles free-tier Render backend cold-start)
+  if ([502, 503, 504].includes(res.status) && retryCount === 0) {
+    console.info(`Received ${res.status} from backend (cold-start warming); retrying in 2 seconds...`);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    return request<T>(endpoint, options, retryCount + 1);
+  }
+
   // Intercept HTML responses from static hosting / Vercel SPA rewrites
   const contentType = res.headers.get("content-type") || "";
   if (contentType.includes("text/html")) {
@@ -94,6 +101,8 @@ async function request<T>(endpoint: string, options: RequestInit = {}, retryCoun
     // Convert raw Firebase expired error into friendly message if it escaped
     if (errorDetail.includes("Token expired") || errorDetail.includes("Invalid Firebase ID token")) {
       errorDetail = "Your session has expired. Please sign in again with Google to continue.";
+    } else if (res.status === 503) {
+      errorDetail = "Satellite backend is warming up or temporarily busy. Please wait a moment and try again.";
     }
 
     throw new Error(errorDetail);

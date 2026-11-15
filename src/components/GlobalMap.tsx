@@ -340,6 +340,9 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
 
         setBeforeScenes(foundBefore);
         setAfterScenes(foundAfter);
+        if (foundBefore.length > 0 || foundAfter.length > 0) {
+          setErrorMsg(null);
+        }
 
         const bestBefore = foundBefore[0] || null;
         const bestAfter = foundAfter[0] || null;
@@ -424,6 +427,9 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
 
         setScenes(foundOptical);
         setSarScenes(foundSar);
+        if (foundOptical.length > 0 || foundSar.length > 0) {
+          setErrorMsg(null);
+        }
 
         const bestOpt = foundOptical[0] || null;
         const bestSar = foundSar[0] || null;
@@ -484,6 +490,7 @@ export function GlobalMap({ onSelectSceneAndAOI, mode }: GlobalMapProps) {
       setScenes(found);
 
       if (found.length > 0) {
+        setErrorMsg(null);
         setSelectedScene(found[0]);
         if (targetAoi) {
           onSelectSceneAndAOI(found[0], targetAoi);
